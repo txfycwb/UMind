@@ -2,20 +2,24 @@ package version1;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.*;
 /*
- * ÓÃÓÚ¹¹ÔìÖ÷´°¿Ú£¬²Ëµ¥À¸
+ * ç”¨äºæ„é€ ä¸»çª—å£ï¼Œèœå•æ 
  */
-public class MainWindow {
-	private JFrame frame;//Ö÷´°¿Ú£¬²»Ê¹ÓÃ
-	private Container frameContainer;//£¬Ö÷´°¿ÚÈİÆ÷£¬²»Ê¹ÓÃ
-	private JPanel pan;//ËùÓĞ×é¼ş¾ù¼ÓÈë´ËÈİÆ÷£¬Ê¹ÓÃ¾ø¶Ô²¼¾Ö
+public class MainWindow implements ActionListener{
+	private JFrame frame;//ä¸»çª—å£ï¼Œä¸ä½¿ç”¨
+	private Container frameContainer;//ï¼Œä¸»çª—å£å®¹å™¨ï¼Œä¸ä½¿ç”¨
+	private JPanel pan;//æ‰€æœ‰ç»„ä»¶å‡åŠ å…¥æ­¤å®¹å™¨ï¼Œä½¿ç”¨ç»å¯¹å¸ƒå±€
+	private JTextArea textArea;
+	
+	
 	public static void main(String args[]) {
 		MainWindow mainWindow = new MainWindow();
 		mainWindow.createWindow();
 		//mainWindow.test();
 	}
 	/*
-	 * ´´½¨´°¿Ú
+	 * åˆ›å»ºçª—å£
 	 */
 	public void createWindow() {
 		this.frame =new JFrame("UMind");
@@ -28,32 +32,38 @@ public class MainWindow {
 		frame.setVisible(true);
 	}
 	/*
-	 * ´´½¨²Ëµ¥²¢¼ÓÈëµ½´°¿ÚÉÏ¶Ë,ÉèÖÃÖú¼Ç·ûºÍ¿ì½İ´ò¿ª·½Ê½,
-	 * ¼°¼ÓÈëÏàÓ¦ÊÂ¼ş¼àÌı£¨Î´Íê³É£©
+	 * åˆ›å»ºèœå•å¹¶åŠ å…¥åˆ°çª—å£ä¸Šç«¯,è®¾ç½®åŠ©è®°ç¬¦å’Œå¿«æ·æ‰“å¼€æ–¹å¼,
+	 * åŠåŠ å…¥ç›¸åº”äº‹ä»¶ç›‘å¬ï¼ˆæœªå®Œæˆï¼‰
 	 */
 	public void createMenu() {
 		JMenuBar menuBar = new JMenuBar();
-		JMenu menuFile = new JMenu("ÎÄ¼ş");
-		JMenu menuEdit = new JMenu("±à¼­");
-		JMenu menuTool = new JMenu("¹¤¾ß");
-		JMenu menuStyle = new JMenu("·ç¸ñ");
-		//¡°ÎÄ¼ş¡±µÄÉèÖÃ
-		JMenuItem openFile =new JMenuItem("´ò¿ª",'O');
-		JMenuItem saveFile =new JMenuItem("±£´æ",'S');
+		JMenu menuFile = new JMenu("æ–‡ä»¶");
+		JMenu menuEdit = new JMenu("ç¼–è¾‘");
+		JMenu menuTool = new JMenu("å·¥å…·");
+		JMenu menuStyle = new JMenu("é£æ ¼");
+		
+		//â€œæ–‡ä»¶â€çš„è®¾ç½®
+		JMenuItem openFile =new JMenuItem("æ‰“å¼€",'O');
+		JMenuItem saveFile =new JMenuItem("ä¿å­˜",'S');
 		openFile.setAccelerator(KeyStroke.getKeyStroke('O',java.awt.Event.CTRL_MASK));
 		saveFile.setAccelerator(KeyStroke.getKeyStroke('S',java.awt.Event.CTRL_MASK));
 		menuFile.add(openFile);
 		menuFile.add(saveFile);
-		//¡°±à¼­¡±µÄÉèÖÃ
-		JMenuItem shear = new JMenuItem("¼ôÇĞ");
-		JMenuItem copy = new JMenuItem("¸´ÖÆ");
+		//æ³¨å†Œç›‘å¬
+		openFile.addActionListener(this);
+		openFile.setActionCommand("open");
+		saveFile.addActionListener(this);
+		saveFile.setActionCommand("save");
+		//â€œç¼–è¾‘â€çš„è®¾ç½®
+		JMenuItem shear = new JMenuItem("å‰ªåˆ‡");
+		JMenuItem copy = new JMenuItem("å¤åˆ¶");
 		menuEdit.add(shear);
 		menuEdit.add(copy);
-		//¡°¹¤¾ß¡±µÄÉèÖÃ
+		//â€œå·¥å…·â€çš„è®¾ç½®
 		
-		//¡°·ç¸ñ¡±µÄÉèÖÃ
+		//â€œé£æ ¼â€çš„è®¾ç½®
 		
-		//¡°ÎÄ¼ş¡±µÈ¼ÓÈëJMenuBar
+		//â€œæ–‡ä»¶â€ç­‰åŠ å…¥JMenuBar
 		menuBar.add(menuFile);
 		menuBar.add(menuEdit);
 		menuBar.add(menuTool);
@@ -61,33 +71,143 @@ public class MainWindow {
 		this.frame.setJMenuBar(menuBar);
 	}
 	/*
-	 * ´´½¨JPanel pan²¢¼ÓÉÏ¹öÖá
-	 * ÏòpanÖĞ¼Ó×é¼şÊ¹ÓÃadd·½·¨
-	 * Òò²ÉÓÃ¾ø¶Ô²¼¾Ö£¬panÖĞ×é¼ş±ØĞëÊ¹ÓÃsetBounds·½·¨¶¨Î»
+	 * åˆ›å»ºJPanel panå¹¶åŠ ä¸Šæ»šè½´
+	 * å‘panä¸­åŠ ç»„ä»¶ä½¿ç”¨addæ–¹æ³•
+	 * å› é‡‡ç”¨ç»å¯¹å¸ƒå±€ï¼Œpanä¸­ç»„ä»¶å¿…é¡»ä½¿ç”¨setBoundsæ–¹æ³•å®šä½
 	 */
 	public void createPanel() {
+		/***********************ç¬¬ä¸€æ¬¡ä»£ç **********************/
+//	    JTextArea text=new JTextArea();
+//		this.pan =new JPanel();
+//		this.pan.setLayout(null);//é‡‡å–ç»å¯¹å¸ƒå±€
+//		this.pan.setBackground(Color.WHITE);//é‡‡å–ç»å¯¹å¸ƒå±€
+//		this.pan.setSize(3000,3000);//é‡‡å–ç»å¯¹å¸ƒå±€
+//		JScrollPane scrollPane=new JScrollPane(this.pan,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+//		this.pan.setPreferredSize(scrollPane.getViewport().getPreferredSize());
+//		this.frameContainer.add(scrollPane);
+		
+		/***********************åŠ æ–‡æœ¬åŸŸåšæµ‹è¯•*****************/
+		this.textArea=new JTextArea(3000,1500);
 		this.pan =new JPanel();
-		this.pan.setLayout(null);//²ÉÈ¡¾ø¶Ô²¼¾Ö
-		this.pan.setBackground(Color.WHITE);//²ÉÈ¡¾ø¶Ô²¼¾Ö
-		this.pan.setSize(3000,3000);//²ÉÈ¡¾ø¶Ô²¼¾Ö
-		JScrollPane scrollPane=new JScrollPane(this.pan,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		this.pan.setPreferredSize(scrollPane.getViewport().getPreferredSize());
+		this.pan.setLayout(null);//é‡‡å–ç»å¯¹å¸ƒå±€
+		this.pan.setBackground(Color.WHITE);//é‡‡å–ç»å¯¹å¸ƒå±€
+		textArea.setTabSize(4);
+		textArea.setFont(new Font("æ ‡æ¥·ä½“", Font.BOLD, 16));
+		textArea.setLineWrap(false);// æ¿€æ´»è‡ªåŠ¨æ¢è¡ŒåŠŸèƒ½
+		textArea.setWrapStyleWord(false);// æ¿€æ´»æ–­è¡Œä¸æ–­å­—åŠŸèƒ½
+		textArea.setBackground(Color.WHITE);
+		
+		JScrollPane scrollPane=new JScrollPane(this.textArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.frameContainer.add(scrollPane);
 	}
 	/*
-	 * ÓÃÓÚ²âÊÔµÄ·½·¨,¿ÉËæÒâ¸ü¸Ä
+	 * ç”¨äºæµ‹è¯•çš„æ–¹æ³•,å¯éšæ„æ›´æ”¹
 	 */
 	public void test() {
-		JLabel l1=new JLabel("´ó¼ÒºÃ");
+		JLabel l1=new JLabel("å¤§å®¶å¥½");
 		JLabel l2=new JLabel("hi,everyon");
 		l1.setBounds(0, 100, 100, 100);
 		l2.setBounds(1000, 2000, 100, 100);
 		pan.add(l2);
 		pan.add(l1);
 	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		String command=e.getActionCommand();
+		if(command.equals("save"))
+		{
+			//åˆ›å»ºæ–‡ä»¶å­˜å‚¨ä½ç½®é€‰æ‹©æ¡†
+			JFileChooser fileChooser=new JFileChooser();
+			fileChooser.setDialogTitle("é€‰æ‹©æ–‡ä»¶å¤¹");
+			fileChooser.showOpenDialog(null);
+			fileChooser.setVisible(true);
+			
+			//å¾—åˆ°æ–‡ä»¶å­˜å‚¨ä½ç½®
+			String saveLocation=fileChooser.getSelectedFile().getAbsolutePath();
+			
+			//æ–‡ä»¶å­˜å‚¨
+			
+			FileWriter fileWriter=null;
+		    BufferedWriter bufferedWriter=null;
+		    
+		    
+			try {
+				fileWriter=new FileWriter(saveLocation);
+				bufferedWriter=new BufferedWriter(fileWriter);
+				/*String str=ta.getText();
+				 * //ä»JTextAreaè·å¾—æ–‡æœ¬ String str1[]=str.split("\n");
+				 *  for(String s:str1){ bw.write(s); bw.newLine(); bw.flush(); *
+				 */
+				String totalText=this.textArea.getText();
+				String []text=totalText.split("\r\n");
+				for(String s:text) {
+					bufferedWriter.write(s+"\r\n");
+				}
+				
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}finally {
+				try {
+					bufferedWriter.close();
+					fileWriter.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+			
+			
+		}
+		else if(command.equals("open")) {
+			//åˆ›å»ºæ–‡ä»¶å­˜å‚¨ä½ç½®é€‰æ‹©æ¡†
+			JFileChooser fileChooser=new JFileChooser();
+			fileChooser.setDialogTitle("é€‰æ‹©æ–‡ä»¶å¤¹");
+			fileChooser.showOpenDialog(null);
+			fileChooser.setVisible(true);
+			
+			//å¾—åˆ°æ–‡ä»¶æ‰“å¼€ä½ç½®
+			String openLocation=fileChooser.getSelectedFile().getAbsolutePath();
+			//æ‰“å¼€æ–‡ä»¶
+			FileReader fileReader=null;
+			BufferedReader bufferedReader=null;
+			
+			try {
+				fileReader=new FileReader(openLocation);
+				bufferedReader=new BufferedReader(fileReader);
+				
+				String text=null;
+				String totalText="";
+				
+				while((text=bufferedReader.readLine())!=null) {
+					totalText=totalText+text+"\r\n";
+				}
+				
+				textArea.setText(totalText);
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}finally {
+				try {
+					bufferedReader.close();
+					fileReader.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		}
+		
+	}
 }
 /*
- * ´°¿ÚÊÂ¼ş´¦ÀíÀà
+ * çª—å£äº‹ä»¶å¤„ç†ç±»
  */
 class MyWindowListener extends WindowAdapter{
 	@Override
